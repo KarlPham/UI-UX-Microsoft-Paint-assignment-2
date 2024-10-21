@@ -1,37 +1,21 @@
-# canvas_functions.py
 import tkinter as tk
-from draw_functions import draw
+from draw_functions import draw, finish_shape, start_shape
 
 def create_canvas(root):
-    """
-    Create a canvas for drawing.
-
-    Parameters:
-    root (Tk): The root window to attach the canvas to.
-
-    Returns:
-    Canvas: The created canvas widget.
-    """
     canvas = tk.Canvas(root, bg='white', width=600, height=400)
     canvas.pack()
     return canvas
 
 def bind_canvas_events(canvas, app):
-    """
-    Bind the necessary events to the canvas for drawing.
-
-    Parameters:
-    canvas (Canvas): The canvas to bind events to.
-    app (DrawingApp): The DrawingApp instance.
-    """
     canvas.bind("<B1-Motion>", lambda event: draw(event, app))  # Draw when mouse is dragged with left button held
-    canvas.bind("<ButtonRelease-1>", lambda event: reset(app))  # Reset pen position when left mouse button is released
+    canvas.bind("<ButtonPress-1>", lambda event: start_shape(event, app))  # Start shape drawing on button press
+    canvas.bind("<ButtonRelease-1>", lambda event: reset_or_finish_shape(app))  # Finalize shape or reset pen position
 
 def reset(app):
-    """
-    Reset the last position of the pen.
-
-    Parameters:
-    app (DrawingApp): The DrawingApp instance.
-    """
     app.last_x, app.last_y = None, None
+
+def reset_or_finish_shape(app):
+    if app.shape_mode:
+        finish_shape(app)  # Finalize shape drawing
+    else:
+        reset(app)  # Reset freehand drawing
