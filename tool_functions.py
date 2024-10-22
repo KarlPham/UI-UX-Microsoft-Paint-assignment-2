@@ -1,9 +1,9 @@
+# tool_functions.py
 import tkinter as tk
 from tkinter.colorchooser import askcolor
 from tkinter import filedialog
 from PIL import Image, ImageTk  # For adding images to buttons
 from PIL import ImageGrab
-
 
 def create_buttons(app, frame):
     """
@@ -13,34 +13,49 @@ def create_buttons(app, frame):
     app (DrawingApp): The DrawingApp instance.
     frame (Frame): The frame to add the buttons to.
     """
+    # Frame for the tool buttons (2 columns)
+    tools_frame = tk.Frame(frame)
+    tools_frame.pack(pady=(10, 2))
+
     # Button to switch to pen (with an image)
     pen_image = ImageTk.PhotoImage(Image.open("./images/pencil_tool.gif"))
-    pen_button = tk.Button(frame, image=pen_image, command=lambda: use_pen(app))
+    pen_button = tk.Button(tools_frame, image=pen_image, command=lambda: use_pen(app))
     pen_button.image = pen_image  # Keep a reference to avoid garbage collection
-    pen_button.pack(pady=(10, 2))
+    pen_button.grid(row=0, column=0, padx=2, pady=2)
 
     # Button to use eraser (with an image)
     eraser_image = ImageTk.PhotoImage(Image.open("./images/eraser_tool.gif"))
-    eraser_button = tk.Button(frame, image=eraser_image, command=lambda: use_eraser(app))
+    eraser_button = tk.Button(tools_frame, image=eraser_image, command=lambda: use_eraser(app))
     eraser_button.image = eraser_image  # Keep a reference to avoid garbage collection
-    eraser_button.pack(pady=2)
+    eraser_button.grid(row=0, column=1, padx=2, pady=2)
 
-    # Button to clear the canvas
-    clear_button = tk.Button(frame, text='Clear', command=lambda: app.canvas.delete("all"))
-    clear_button.pack(pady=2)
+    # Button for rectangle shape tool (with an image)
+    rectangle_image = ImageTk.PhotoImage(Image.open("./images/shape_tool.gif"))
+    rectangle_button = tk.Button(tools_frame, image=rectangle_image, command=lambda: use_shape(app, "rectangle"))
+    rectangle_button.image = rectangle_image  # Keep a reference to avoid garbage collection
+    rectangle_button.grid(row=1, column=0, padx=2, pady=2)
 
-    # Buttons for shape tools
-    rectangle_button = tk.Button(frame, text='Rectangle', command=lambda: use_shape(app, "rectangle"))
-    rectangle_button.pack(pady=2)
-    
-    oval_button = tk.Button(frame, text='Oval', command=lambda: use_shape(app, "oval"))
-    oval_button.pack(pady=2)
-    
-    line_button = tk.Button(frame, text='Line', command=lambda: use_shape(app, "line"))
-    line_button.pack(pady=2)
-    # Button to insert an image
+    # Button for oval shape tool (with an image)
+    oval_image = ImageTk.PhotoImage(Image.open("./images/oval_tool.gif"))
+    oval_button = tk.Button(tools_frame, image=oval_image, command=lambda: use_shape(app, "oval"))
+    oval_button.image = oval_image  # Keep a reference to avoid garbage collection
+    oval_button.grid(row=1, column=1, padx=2, pady=2)
+
+    # Button for line shape tool (with an image)
+    line_image = ImageTk.PhotoImage(Image.open("./images/line_tool.gif"))
+    line_button = tk.Button(tools_frame, image=line_image, command=lambda: use_shape(app, "line"))
+    line_button.image = line_image  # Keep a reference to avoid garbage collection
+    line_button.grid(row=2, column=0, padx=2, pady=2)
+
+    # Button to clear the canvas (with an image)
+    clear_image = ImageTk.PhotoImage(Image.open("./images/clear_tool.gif"))
+    clear_button = tk.Button(tools_frame, image=clear_image, command=lambda: app.canvas.delete("all"))
+    clear_button.image = clear_image  # Keep a reference to avoid garbage collection
+    clear_button.grid(row=2, column=1, padx=2, pady=2)
+
+    # Button to insert an image (placed at the bottom)
     insert_image_button = tk.Button(frame, text='Insert Image', command=lambda: insert_image(app))
-    insert_image_button.pack(pady=2)
+    insert_image_button.pack(pady=(10, 2))
 
 def create_color_picker(app, frame):
     color_frame = tk.Frame(frame)
@@ -110,6 +125,7 @@ def use_shape(app, shape_type):
     app.eraser_on = False  # Ensure eraser is off
     app.shape_mode = shape_type  # Set shape mode on to the specific shape type
     app.canvas.config(cursor="cross")  # Change cursor to indicate shape mode
+
 def save_file(app):
     """
     Save the current drawing as a PNG file.
@@ -145,6 +161,7 @@ def save_as_file(app):
                                        app.canvas.winfo_rooty() + app.canvas.winfo_height()))
         image.save(file_path)
         app.current_file_path = file_path  # Lưu đường dẫn file hiện tại
+
 def open_file(app):
     """Open an image file and display it on the canvas."""
     file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png;*.gif")])
@@ -155,5 +172,5 @@ def open_file(app):
         # Load the image and display it on the canvas
         img = Image.open(file_path)
         app.image = ImageTk.PhotoImage(img)  # Keep a reference to avoid garbage collection
-        app.canvas.create_image(0, 0, anchor=tk.NW, image=app.image)  # Display image at top-left corner
+        app.canvas.create_image(0, 0, anchor=tk.NW, image=app.image)  # Display image at top-left corner  
         app.image_file_path = file_path  # Save the path for later use if needed
