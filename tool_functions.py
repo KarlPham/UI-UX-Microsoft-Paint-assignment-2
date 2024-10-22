@@ -174,3 +174,16 @@ def open_file(app):
         app.image = ImageTk.PhotoImage(img)  # Keep a reference to avoid garbage collection
         app.canvas.create_image(0, 0, anchor=tk.NW, image=app.image)  # Display image at top-left corner  
         app.image_file_path = file_path  # Save the path for later use if needed
+
+def change_pen_size(app, value):
+    """
+    Update the pen and eraser size based on the slider value.
+    
+    Parameters:
+    app (DrawingApp): The DrawingApp instance.
+    value (str): The new size value from the slider.
+    """
+    app.pen_size = int(value)
+    # The eraser size is also updated since it is controlled by the same slider.
+    if app.eraser_on:
+        app.canvas.config(cursor=f"@./images/eraser_tool_{app.pen_size}.cur")
