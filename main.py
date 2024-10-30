@@ -6,55 +6,67 @@ from tkinter import Menu
 
 class DrawingApp:
     def __init__(self, master, window_width=800, window_height=600):
-        # Set up the main window with the specified size
+        """
+        Initializes the main application window and sets up the drawing environment.
+        Args:
+            master (Tk): The main Tkinter window.
+            window_width (int): Width of the application window.
+            window_height (int): Height of the application window.
+        """
+        # Set up the main window with a title and size
         self.master = master 
         self.master.title("Drawing App - Microsoft Clone")
         self.master.geometry(f"{window_width}x{window_height}")
 
-        # Initialize drawing settings
-        self.pen_color = 'black'
-        self.eraser_on = False
-        self.pen_size = 5  # Default pen size
-        self.shape_mode = False
-        self.last_x, self.last_y = None, None
-        self.shape_start_x = None
-        self.shape_start_y = None
+        # Drawing tool attributes
+        self.pen_color = 'black'  # Default pen color
+        self.eraser_on = False    # Eraser mode off by default
+        self.pen_size = 5         # Default pen size
+        self.shape_mode = False   # Shape mode off by default
+        self.last_x, self.last_y = None, None  # Track last coordinates for drawing
+        self.shape_start_x = None # Starting x coordinate for shape drawing
+        self.shape_start_y = None # Starting y coordinate for shape drawing
 
-        # Create Tools Frame on the left
+        # Set up the tools frame (left panel)
         tools_frame = tk.Frame(self.master, padx=5, pady=5, bg="lightgrey")
         tools_frame.pack(side=tk.LEFT, fill=tk.Y)
 
-        # Create Canvas on the right side of the tools frame
+        # Create the drawing canvas (right panel)
         self.canvas = create_canvas(self.master)
         self.canvas.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
 
-        # Create tool buttons and color picker in the tools frame
+        # Set up tool buttons and color picker within the tools frame
         create_buttons(self, tools_frame)
         create_color_picker(self, tools_frame)
 
-        # Bind canvas events for drawing
+        # Bind mouse events to the canvas for drawing actions
         bind_canvas_events(self.canvas, self)
 
         # Add pen size slider in the tools frame
         pen_size_label = tk.Label(tools_frame, text="Pen Size", bg="lightgrey")
         pen_size_label.pack(pady=5)
         
-        self.pen_size_slider = tk.Scale(tools_frame, from_=1, to=20, orient=tk.HORIZONTAL, bg="lightgrey", command=lambda value: change_pen_size(self, value))
-        self.pen_size_slider.set(self.pen_size)  # Set default pen size
+        # Slider to adjust pen size dynamically
+        self.pen_size_slider = tk.Scale(
+            tools_frame, from_=1, to=20, orient=tk.HORIZONTAL, bg="lightgrey", 
+            command=lambda value: change_pen_size(self, value)
+        )
+        self.pen_size_slider.set(self.pen_size)  # Initialize slider with default pen size
         self.pen_size_slider.pack()
 
-        # Create Menu Bar
+        # Set up the Menu Bar at the top
         menu_bar = Menu(self.master)
         self.master.config(menu=menu_bar)
 
-        # Create "File" Menu
+        # "File" menu for opening and saving files
         file_menu = Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="Open", command=lambda: open_file(self))  # Add Open command
-        file_menu.add_command(label="Save", command=lambda: save_file(self))
-        file_menu.add_command(label="Save As", command=lambda: save_as_file(self))
+        file_menu.add_command(label="Open", command=lambda: open_file(self))  # Open file command
+        file_menu.add_command(label="Save", command=lambda: save_file(self))  # Save file command
+        file_menu.add_command(label="Save As", command=lambda: save_as_file(self))  # Save As command
 
 if __name__ == "__main__":
+    # Initialize and run the drawing application
     master = tk.Tk()
     app = DrawingApp(master)
     master.mainloop()
